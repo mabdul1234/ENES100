@@ -41,7 +41,7 @@ void directionControl(){
 void speedControl(){
  // Turn on motors
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 256; i++) { //should make the wheels start slow and constantly speed up
       analoglWrite(enA, i);
       analogWrite(enB, i);
       analogWrite(enC, i);
