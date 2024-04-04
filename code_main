@@ -32,7 +32,6 @@ pinMode(enA, OUTPUT);
 pinMode(enB, OUTPUT);
 pinMode(enC, OUTPUT);
 pinMode(enD, OUTPUT);
-
 pinMode(in1, OUTPUT);
 pinMode(in2, OUTPUT);
 pinMode(in3, OUTPUT);
@@ -69,7 +68,14 @@ void loop() {
 
  delay(e); //use unsigned long from above 
 
- 
+ directionControl();
+ delay(1000);
+ speedControl();
+ delay(1000);
  
 }
 
+void directionControl() {
+ analogWrite(enA, 255);
+ analogWrite(enB, 255);
+}
