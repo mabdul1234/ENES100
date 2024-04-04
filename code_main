@@ -31,33 +31,25 @@ void directionControl(){
  digitalWrite(enD, 255);
 
  // Turn on motor A, B, C, D
- digitalWrite(in1, HIGH);
- digitalWrite(in2, HIGH);
+ digitalWrite(in1, HIGH); //it does need to be high - low
+ digitalWrite(in2, LOW);
  digitalWrite(in3, HIGH);
- digitalWrite(in4, HIGH);
+ digitalWrite(in4, LOW);
  digitalWrite(in5, HIGH);
- digitalWrite(in6, HIGH);
+ digitalWrite(in6, LOW);
  digitalWrite(in7, HIGH);
- digitalWrite(in8, HIGH);
+ digitalWrite(in8, LOW);
  delay(2000);
 }
 
 void speedControl(){
  // Turn on motors
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, HIGH);
-    digitalWrite(in5, HIGH);
-    digitalWrite(in6, HIGH);
-    digitalWrite(in7, HIGH);
-    digitalWrite(in8, HIGH);
-	
+
     for (int i = 0; i < 256; i++) {
-      digitalWrite(enA, i);
-      digitalWrite(enB, i);
-      digitalWrite(enC, i);
-      digitalWrite(enD, i);
+      analoglWrite(enA, i);
+      analogWrite(enB, i);
+      analogWrite(enC, i);
+      analogWrite(enD, i);
       delay(20);
     }
 }
@@ -78,21 +70,12 @@ pinMode(in5, OUTPUT);
 pinMode(in6, OUTPUT);
 pinMode(in7, OUTPUT);
 pinMode(in8, OUTPUT);
-	
-digitalWrite(in1, LOW);
-digitalWrite(in2, LOW);
-digitalWrite(in3, LOW);
-digitalWrite(in4, LOW);
-digitalWrite(in5, LOW);
-digitalWrite(in6, LOW);
-digitalWrite(in7, LOW);
-digitalWrite(in8, LOW);
 
 }
 
 void loop() {
 
- Enes100.updateLocation(); //updates x and Y arcuo marker values
+ /* Enes100.updateLocation(); //updates x and Y arcuo marker values
 
  float x = Enes100.getX();
  float y = Enes100.getY();
@@ -105,6 +88,8 @@ void loop() {
  //Enes100.println(y);
 
  delay(e); //use unsigned long from above 
+*/ 
+
  directionControl();
  speedControl();
  
