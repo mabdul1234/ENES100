@@ -27,10 +27,10 @@ int in8 = 3;
 void directionControl(){
 
  // Turn on motor A, B, C, D
- digitalWrite(in1, HIGH); //it does need to be high - low
- digitalWrite(in2, LOW);
- digitalWrite(in3, HIGH);
- digitalWrite(in4, LOW);
+ digitalWrite(in1, LOW); //NEEDS TO BE IN THIS ORIENTATION OF LOWS AND HIGHS TO MOVE STRAIGHT
+ digitalWrite(in2, HIGH);
+ digitalWrite(in3, LOW);
+ digitalWrite(in4, HIGH);
  digitalWrite(in5, HIGH);
  digitalWrite(in6, LOW);
  digitalWrite(in7, HIGH);
@@ -41,7 +41,8 @@ void directionControl(){
 void speedControl(){
  // Turn on motors
 
-    for (int i = 0; i < 256; i++) { //should make the wheels start slow and constantly speed up
+    //for (int i = 0; i < 256; i++) { //should make the wheels start slow and constantly speed up
+      int i = 255;
       analoglWrite(enA, i);
       analogWrite(enB, i);
       analogWrite(enC, i);
@@ -52,7 +53,7 @@ void speedControl(){
 
 void setup() {
 
-Enes100.begin("//put team here", "crash", "//arcuo number", "//TX arduino pins", "//RX arduino pins"); //cannot use 0 and 1 for TX and RX
+//Enes100.begin("//put team here", "crash", "//arcuo number", "//TX arduino pins", "//RX arduino pins"); //cannot use 0 and 1 for TX and RX
 
 pinMode(enA, OUTPUT);
 pinMode(enB, OUTPUT);
