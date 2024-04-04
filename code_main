@@ -25,10 +25,6 @@ int in7 = 4;
 int in8 = 3;
 
 void directionControl(){
- digitalWrite(enA, 255);
- digitalWrite(enB, 255);
- digitalWrite(enC, 255);
- digitalWrite(enD, 255);
 
  // Turn on motor A, B, C, D
  digitalWrite(in1, HIGH); //it does need to be high - low
