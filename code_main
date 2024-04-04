@@ -1,0 +1,32 @@
+#include <Enes100.h>
+
+unsigned long e = 10; //used for timing 
+
+#define LED1 4;  //now LED! is 4, this sounds like the C++ stuff
+
+void setup() {
+
+  Enes100.begin("//put team here", "crash", "//arcuo number", "//TX arduino pins", "//RX arduino pins"); //cannot use 0 and 1 for TX and RX
+
+}
+
+void loop() {
+
+ Enes100.updateLocation(); //updates x and Y arcuo marker values
+
+ float x = Enes100.getX();
+ float y = Enes100.getY();
+
+ float theta = Enes100.getTheta();
+
+ bool v = Enes100.isVisible(); //is the aruco marker visible?
+
+ Enes100.println(x); //print x coordinate to vision system
+ //Enes100.println(y);
+
+ delay(e); //use unsigned long from above 
+
+ 
+ 
+}
+
