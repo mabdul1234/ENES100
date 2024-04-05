@@ -3,9 +3,9 @@
 unsigned long e = 10; //used for timing 
 
 //Defines variable duration used for finding time of wave (ULTRASONIC)
-long duration;
+float duration;
 //Defines variable distance used for finding distance of wave (ULTRASONIC)
-int distance;
+float distance;
 
 #define LED1 4;  //now LED! is 4, this sounds like the C++ stuff
 
@@ -35,7 +35,7 @@ int echoPin = 24;
 
 void directionControl(){
 
- // Turn on motor A, B, C, D
+ //Turn on motor A, B, C, D
  digitalWrite(in1, LOW); //NEEDS TO BE IN THIS ORIENTATION OF LOWS AND HIGHS TO MOVE STRAIGHT
  digitalWrite(in2, HIGH);
  digitalWrite(in3, LOW);
@@ -103,8 +103,8 @@ void loop() {
  delay(e); //use unsigned long from above 
 */ 
 
-/* directionControl();
- speedControl(); */
+ directionControl();
+ speedControl(); 
 
 //Clears the trigPin so the sensor is off, therefore distance is 0
 digitalWrite(trigPin, LOW);
