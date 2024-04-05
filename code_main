@@ -2,6 +2,11 @@
 
 unsigned long e = 10; //used for timing 
 
+//Defines variable duration used for finding time of wave (ULTRASONIC)
+long duration;
+//Defines variable distance used for finding distance of wave (ULTRASONIC)
+int distance;
+
 #define LED1 4;  //now LED! is 4, this sounds like the C++ stuff
 
 //Motor A Connections:
@@ -24,6 +29,10 @@ int enD = 2;
 int in7 = 4;
 int in8 = 3;
 
+//Ultrasonic Connections (TEST)
+int trigPin = 22;
+int echoPin = 24;
+
 void directionControl(){
 
  // Turn on motor A, B, C, D
@@ -43,7 +52,7 @@ void speedControl(){
 
     //for (int i = 0; i < 256; i++) { //should make the wheels start slow and constantly speed up
       int i = 255;
-      analoglWrite(enA, i);
+      analogWrite(enA, i);
       analogWrite(enB, i);
       analogWrite(enC, i);
       analogWrite(enD, i);
@@ -68,6 +77,13 @@ pinMode(in6, OUTPUT);
 pinMode(in7, OUTPUT);
 pinMode(in8, OUTPUT);
 
+//Declares ULTRA sensor as outputs
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+//Begins collecting data from all sensors globally at a rate of 9600 bits/second
+
+Serial.begin(9600);
+
 }
 
 void loop() {
@@ -87,8 +103,27 @@ void loop() {
  delay(e); //use unsigned long from above 
 */ 
 
- directionControl();
- speedControl();
- 
+/* directionControl();
+ speedControl(); */
+
+//Clears the trigPin so the sensor is off, therefore distance is 0
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+
+// Sets the trigPin on HIGH state for 10 micro seconds, reading distance for 10 microseconds
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+
+// Reads the echoPin, returns the sound wave travel time in microseconds
+duration = pulseIn(echoPin, HIGH);
+
+// Calculating the distance
+distance = (duration * 0.034 ) / 2;
+
+Serial.print("Distance: ");
+Serial.println(distance); // Print the distance to the serial monitor
+delay(500); // Delay for stability
+
 }
 
