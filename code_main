@@ -1,5 +1,7 @@
 #include <Enes100.h>
 
+float x, y, theta;
+
 //Used for timing
 unsigned long e = 10;  
 
@@ -60,6 +62,18 @@ void speedControl(){
  delay(20);
 }
 
+void start_turning (){
+digitalWrite (in1, LOW);
+digitalWrite (in2, HIGH);
+digitalWrite (in3, LOW);
+digitalWrite(in4, HIGH);
+digitalWrite(in5, HIGH);
+digitalWrite(in6, LOW);
+digitalWrite(in7, HIGH);
+digitalWrite(in8, LOW);
+Enes100.println("It should be turning");
+}
+
 void setup() {
 
 Enes100.begin("CRASH", CRASH_SITE, 231, 50, 22); 
@@ -88,23 +102,37 @@ pinMode(echoPin, INPUT);*/
 
 void loop() {
 
-directionControl();
-speedControl(); 
-
 Enes100.updateLocation(); //updates x and Y arcuo marker values
 
 bool v = Enes100.isVisible(); //is the aruco marker visible?
-
 float x = Enes100.getX();
 float y = Enes100.getY();
 float theta = Enes100.getTheta();
+
+float goalTheta = 1.57;
+
+speedControl(); 
+//directionControl();
+
+for (int i = 0; i < 3; i++) {
+delay(2000);
+Enes100.println("It's in the for loop");
+
+while (theta < goalTheta){
+
+Enes100.println("It's in the while loop");
+start_turning();
+
+theta = Enes100.getTheta();
+}
+delay (1000);
+goalTheta += 1.57;
+}
 
 Enes100.println(x); //print x coordinate to vision system
 Enes100.println(y); //print y coordinate to vision system 
 Enes100.println(theta); //print theta to vision system
 delay(e); //use unsigned long from above 
-
-// if theta == 
 
 //Clears the trigPin so the sensor is off, therefore distance is 0
 /*digitalWrite(trigPin, LOW);
