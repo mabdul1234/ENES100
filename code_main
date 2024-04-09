@@ -1,13 +1,16 @@
 #include <Enes100.h>
 
-unsigned long e = 10; //used for timing 
+//Used for timing
+unsigned long e = 10;  
 
 //Defines variable duration used for finding time of wave (ULTRASONIC)
-float duration;
-//Defines variable distance used for finding distance of wave (ULTRASONIC)
-float distance;
+//float duration;
 
-#define LED1 4;  //now LED! is 4, this sounds like the C++ stuff
+//Defines variable distance used for finding distance of wave (ULTRASONIC)
+//float distance;
+
+//Now LED! is 4, this sounds like the C++ stuff
+#define LED1 4;  
 
 //Motor A Connections:
 int enA = 13;
@@ -29,14 +32,14 @@ int enD = 2;
 int in7 = 4;
 int in8 = 3;
 
-//Ultrasonic Connections (TEST)
-int trigPin = 22;
-int echoPin = 24;
+//Ultrasonic Connections 
+//int trigPin = 22;
+//int echoPin = 24;
 
 void directionControl(){
 
  //Turn on motor A, B, C, D
- digitalWrite(in1, LOW); //NEEDS TO BE IN THIS ORIENTATION OF LOWS AND HIGHS TO MOVE STRAIGHT
+ digitalWrite(in1, LOW); 
  digitalWrite(in2, HIGH);
  digitalWrite(in3, LOW);
  digitalWrite(in4, HIGH);
@@ -48,22 +51,20 @@ void directionControl(){
 }
 
 void speedControl(){
- // Turn on motors
-
-    //for (int i = 0; i < 256; i++) { //should make the wheels start slow and constantly speed up
-      int i = 255;
-      analogWrite(enA, i);
-      analogWrite(enB, i);
-      analogWrite(enC, i);
-      analogWrite(enD, i);
-      delay(20);
-    }
+ //Turn on motors
+ int i = 255;
+ analogWrite(enA, i);
+ analogWrite(enB, i);
+ analogWrite(enC, i);
+ analogWrite(enD, i);
+ delay(20);
 }
 
 void setup() {
 
-//Enes100.begin("//put team here", "crash", "//arcuo number", "//TX arduino pins", "//RX arduino pins"); //cannot use 0 and 1 for TX and RX
+Enes100.begin("CRASH", CRASH_SITE, 231, 50, 22); 
 
+//Motor pins
 pinMode(enA, OUTPUT);
 pinMode(enB, OUTPUT);
 pinMode(enC, OUTPUT);
@@ -77,37 +78,36 @@ pinMode(in6, OUTPUT);
 pinMode(in7, OUTPUT);
 pinMode(in8, OUTPUT);
 
-//Declares ULTRA sensor as outputs
-pinMode(trigPin, OUTPUT);
-pinMode(echoPin, INPUT);
+//Ultrasonic sensor pins
+/*pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);*/
+
 //Begins collecting data from all sensors globally at a rate of 9600 bits/second
-
-Serial.begin(9600);
-
+//Serial.begin(9600);
 }
 
 void loop() {
 
- /* Enes100.updateLocation(); //updates x and Y arcuo marker values
+directionControl();
+speedControl(); 
 
- float x = Enes100.getX();
- float y = Enes100.getY();
+Enes100.updateLocation(); //updates x and Y arcuo marker values
 
- float theta = Enes100.getTheta();
+bool v = Enes100.isVisible(); //is the aruco marker visible?
 
- bool v = Enes100.isVisible(); //is the aruco marker visible?
+float x = Enes100.getX();
+float y = Enes100.getY();
+float theta = Enes100.getTheta();
 
- Enes100.println(x); //print x coordinate to vision system
- //Enes100.println(y);
+Enes100.println(x); //print x coordinate to vision system
+Enes100.println(y); //print y coordinate to vision system 
+Enes100.println(theta); //print theta to vision system
+delay(e); //use unsigned long from above 
 
- delay(e); //use unsigned long from above 
-*/ 
-
- directionControl();
- speedControl(); 
+// if theta == 
 
 //Clears the trigPin so the sensor is off, therefore distance is 0
-digitalWrite(trigPin, LOW);
+/*digitalWrite(trigPin, LOW);
 delayMicroseconds(2);
 
 // Sets the trigPin on HIGH state for 10 micro seconds, reading distance for 10 microseconds
@@ -122,8 +122,7 @@ duration = pulseIn(echoPin, HIGH);
 distance = (duration * 0.034 ) / 2;
 
 Serial.print("Distance: ");
-Serial.println(distance); // Print the distance to the serial monitor
-delay(500); // Delay for stability
+Serial.println(distance); //Print the distance to the serial monitor
+delay(500); //Delay for stability */
 
 }
-
