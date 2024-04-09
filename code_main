@@ -67,11 +67,10 @@ digitalWrite (in1, LOW);
 digitalWrite (in2, HIGH);
 digitalWrite (in3, LOW);
 digitalWrite(in4, HIGH);
-digitalWrite(in5, HIGH);
-digitalWrite(in6, LOW);
-digitalWrite(in7, HIGH);
-digitalWrite(in8, LOW);
-Enes100.println("It should be turning");
+digitalWrite(in5, LOW);
+digitalWrite(in6, HIGH);
+digitalWrite(in7, LOW);
+digitalWrite(in8, HIGH);
 }
 
 void setup() {
@@ -108,26 +107,29 @@ bool v = Enes100.isVisible(); //is the aruco marker visible?
 float x = Enes100.getX();
 float y = Enes100.getY();
 float theta = Enes100.getTheta();
-
 float goalTheta = 1.57;
 
 speedControl(); 
 //directionControl();
 
-for (int i = 0; i < 3; i++) {
 delay(2000);
-Enes100.println("It's in the for loop");
 
 while (theta < goalTheta){
-
-Enes100.println("It's in the while loop");
 start_turning();
-
 theta = Enes100.getTheta();
 }
-delay (1000);
-goalTheta += 1.57;
-}
+
+digitalWrite (in1, LOW);
+digitalWrite (in2, LOW);
+digitalWrite (in3, LOW);
+digitalWrite(in4, LOW);
+digitalWrite(in5, LOW);
+digitalWrite(in6, LOW);
+digitalWrite(in7, LOW);
+digitalWrite(in8, LOW);
+
+delay (2000);
+
 
 Enes100.println(x); //print x coordinate to vision system
 Enes100.println(y); //print y coordinate to vision system 
