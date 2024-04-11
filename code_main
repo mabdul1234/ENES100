@@ -6,10 +6,10 @@ float x, y, theta;
 unsigned long e = 10;  
 
 //Defines variable duration used for finding time of wave (ULTRASONIC)
-//float duration;
+float duration;
 
 //Defines variable distance used for finding distance of wave (ULTRASONIC)
-//float distance;
+float distance;
 
 //Now LED! is 4, this sounds like the C++ stuff
 #define LED1 4;  
@@ -35,12 +35,10 @@ int in7 = 4;
 int in8 = 3;
 
 //Ultrasonic Connections 
-//int trigPin = 22;
-//int echoPin = 24;
+int echoPin = 24;
+int trigPin = 26;
 
-void directionControl(){
-
- //Turn on motor A, B, C, D
+void forward_Control(){
  digitalWrite(in1, LOW); 
  digitalWrite(in2, HIGH);
  digitalWrite(in3, LOW);
@@ -49,11 +47,42 @@ void directionControl(){
  digitalWrite(in6, LOW);
  digitalWrite(in7, HIGH);
  digitalWrite(in8, LOW);
- delay(2000);
+}
+
+void back_Control(){
+ digitalWrite(in1, HIGH); 
+ digitalWrite(in2, LOW);
+ digitalWrite(in3, HIGH);
+ digitalWrite(in4, LOW);
+ digitalWrite(in5, LOW);
+ digitalWrite(in6, HIGH);
+ digitalWrite(in7, LOW);
+ digitalWrite(in8, HIGH);
+}
+
+void move_right(){
+ digitalWrite(in1, HIGH); 
+ digitalWrite(in2, LOW);
+ digitalWrite(in3, LOW);
+ digitalWrite(in4, HIGH);
+ digitalWrite(in5, LOW);
+ digitalWrite(in6, HIGH);
+ digitalWrite(in7, HIGH);
+ digitalWrite(in8, LOW);
+}
+
+void move_left(){
+ digitalWrite(in1, LOW); 
+ digitalWrite(in2, HIGH);
+ digitalWrite(in3, HIGH);
+ digitalWrite(in4, LOW);
+ digitalWrite(in5, HIGH);
+ digitalWrite(in6, LOW);
+ digitalWrite(in7, LOW);
+ digitalWrite(in8, HIGH);
 }
 
 void speedControl(){
- //Turn on motors
  int i = 255;
  analogWrite(enA, i);
  analogWrite(enB, i);
@@ -62,6 +91,7 @@ void speedControl(){
  delay(20);
 }
 
+//what direction is this?
 void start_turning (){
 digitalWrite (in1, LOW);
 digitalWrite (in2, HIGH);
@@ -72,6 +102,35 @@ digitalWrite(in6, HIGH);
 digitalWrite(in7, LOW);
 digitalWrite(in8, HIGH);
 }
+
+void stop_OSV (){
+digitalWrite(in1, LOW);
+digitalWrite(in2, LOW);
+digitalWrite(in3, LOW);
+digitalWrite(in4, LOW);
+digitalWrite(in5, LOW);
+digitalWrite(in6, LOW);
+digitalWrite(in7, LOW);
+digitalWrite(in8, LOW);
+}
+
+void ultrasonic_Distance () {
+digitalWrite(trigPin, LOW);
+delayMicroseconds(20);
+
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(100);
+
+//Reads the echoPin, returns the sound wave travel time in microseconds
+duration = pulseIn(echoPin, HIGH);
+
+//Calculating the distance
+distance = (duration * 0.034 ) / 2;
+}
+
+/*void height_position () {
+  
+}*/
 
 void setup() {
 
@@ -92,10 +151,9 @@ pinMode(in7, OUTPUT);
 pinMode(in8, OUTPUT);
 
 //Ultrasonic sensor pins
-/*pinMode(trigPin, OUTPUT);
-pinMode(echoPin, INPUT);*/
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
 
-//Begins collecting data from all sensors globally at a rate of 9600 bits/second
 //Serial.begin(9600);
 }
 
@@ -107,52 +165,30 @@ bool v = Enes100.isVisible(); //is the aruco marker visible?
 float x = Enes100.getX();
 float y = Enes100.getY();
 float theta = Enes100.getTheta();
-float goalTheta = 1.57;
 
 speedControl(); 
-//directionControl();
 
-delay(2000);
+forward_Control();
+delay(100);
 
-while (theta < goalTheta){
-start_turning();
-theta = Enes100.getTheta();
-}
-
-digitalWrite (in1, LOW);
-digitalWrite (in2, LOW);
-digitalWrite (in3, LOW);
-digitalWrite(in4, LOW);
-digitalWrite(in5, LOW);
-digitalWrite(in6, LOW);
-digitalWrite(in7, LOW);
-digitalWrite(in8, LOW);
-
-delay (2000);
-
-
-Enes100.println(x); //print x coordinate to vision system
+/*Enes100.println(x); //print x coordinate to vision system
 Enes100.println(y); //print y coordinate to vision system 
 Enes100.println(theta); //print theta to vision system
-delay(e); //use unsigned long from above 
+delay(e); //use unsigned long from above */
 
-//Clears the trigPin so the sensor is off, therefore distance is 0
-/*digitalWrite(trigPin, LOW);
-delayMicroseconds(2);
+ultrasonic_Distance ();
 
-// Sets the trigPin on HIGH state for 10 micro seconds, reading distance for 10 microseconds
-digitalWrite(trigPin, HIGH);
-delayMicroseconds(10);
-digitalWrite(trigPin, LOW);
+Enes100.println(distance);
+delay(100);
 
-// Reads the echoPin, returns the sound wave travel time in microseconds
-duration = pulseIn(echoPin, HIGH);
-
-// Calculating the distance
-distance = (duration * 0.034 ) / 2;
-
-Serial.print("Distance: ");
-Serial.println(distance); //Print the distance to the serial monitor
-delay(500); //Delay for stability */
+if (distance > 24 && distance < 26) {
+  Enes100.println("The height of the box is 26 cm!")
+}
+else if (distance > 17 && distance < 19){
+  Enes100.println("The height of the box is 18 cm!")
+}
+else if (distance > 12 && distance is < 14) {
+  Enes100.println("The height of the box is 13.5 cm!")
+}
 
 }
