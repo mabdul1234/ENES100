@@ -117,20 +117,13 @@ digitalWrite(in8, LOW);
 void ultrasonic_Distance () {
 digitalWrite(trigPin, LOW);
 delayMicroseconds(20);
-
 digitalWrite(trigPin, HIGH);
 delayMicroseconds(100);
-
 //Reads the echoPin, returns the sound wave travel time in microseconds
 duration = pulseIn(echoPin, HIGH);
-
 //Calculating the distance
 distance = (duration * 0.034 ) / 2;
 }
-
-/*void height_position () {
-  
-}*/
 
 void setup() {
 
@@ -167,28 +160,37 @@ float y = Enes100.getY();
 float theta = Enes100.getTheta();
 
 speedControl(); 
-
+ultrasonic_Distance();
 forward_Control();
-delay(100);
 
-/*Enes100.println(x); //print x coordinate to vision system
-Enes100.println(y); //print y coordinate to vision system 
-Enes100.println(theta); //print theta to vision system
-delay(e); //use unsigned long from above */
-
-ultrasonic_Distance ();
-
+Enes100.println("This is distance: ");
 Enes100.println(distance);
-delay(100);
+Enes100.println("This is x: ");
+Enes100.println(x); //print x coordinate to vision system
+Enes100.println("This is y: ");
+Enes100.println(y); //print y coordinate to vision system 
+delay(10);
+//Enes100.println(theta); //print theta to vision system
+//delay(10); //use unsigned long from above
 
-if (distance > 24 && distance < 26) {
-  Enes100.println("The height of the box is 26 cm!")
+if (distance > 24 && distance < 26){
+stop_OSV();
+Enes100.println("The height of the box is 26 cm!");
 }
-else if (distance > 17 && distance < 19){
-  Enes100.println("The height of the box is 18 cm!")
+
+
+/*
+else {
+forward_Control();
 }
-else if (distance > 12 && distance is < 14) {
-  Enes100.println("The height of the box is 13.5 cm!")
+if (distance > 17 && distance < 19){
+Enes100.println("The height of the box is 18 cm!");
 }
+else {
+forward_Control();
+}
+if (distance > 12 && distance < 14) {
+  Enes100.println("The height of the box is 13.5 cm!");
+}*/ 
 
 }
