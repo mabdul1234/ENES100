@@ -174,23 +174,14 @@ delay(10);
 //delay(10); //use unsigned long from above
 
 if (distance > 24 && distance < 26){
-stop_OSV();
 Enes100.println("The height of the box is 26 cm!");
 }
-
-
-/*
-else {
-forward_Control();
-}
-if (distance > 17 && distance < 19){
+else if (distance > 15 && distance < 18){
 Enes100.println("The height of the box is 18 cm!");
 }
-else {
-forward_Control();
-}
-if (distance > 12 && distance < 14) {
+else if (distance > 9 && distance < 13.5) {
   Enes100.println("The height of the box is 13.5 cm!");
-}*/ 
+}
 
 }
+
