@@ -47,6 +47,7 @@ void forward_Control(){
  digitalWrite(in6, LOW);
  digitalWrite(in7, HIGH);
  digitalWrite(in8, LOW);
+ delay(1000);
 }
 
 void back_Control(){
@@ -125,6 +126,28 @@ duration = pulseIn(echoPin, HIGH);
 distance = (duration * 0.034 ) / 2;
 }
 
+void width () {
+while (distance < 5){
+  move_left();
+}
+stop_OSV();
+delay(3000);
+move_right();
+delay(100);
+stop_OSV();
+delay(2000);
+
+unsigned long StartTime = millis();
+
+while (distance < 5){
+  move_right();
+}
+stop_OSV();
+unsigned long CurrentTime = millis();
+unsigned long ElapsedTime = CurrentTime - StartTime;
+delay(3000);
+}
+
 void setup() {
 
 Enes100.begin("CRASH", CRASH_SITE, 231, 50, 22); 
@@ -155,33 +178,53 @@ void loop() {
 Enes100.updateLocation(); //updates x and Y arcuo marker values
 
 bool v = Enes100.isVisible(); //is the aruco marker visible?
+
+boolean isValid = false;
+
+while(!isValid) {
+if (Enes100.getX() >= 0 || Enes100.getY() >= 0){
+isValid = true;
 float x = Enes100.getX();
 float y = Enes100.getY();
-float theta = Enes100.getTheta();
-
-speedControl(); 
-ultrasonic_Distance();
-forward_Control();
-
-Enes100.println("This is distance: ");
-Enes100.println(distance);
 Enes100.println("This is x: ");
 Enes100.println(x); //print x coordinate to vision system
 Enes100.println("This is y: ");
 Enes100.println(y); //print y coordinate to vision system 
+}
+}
+
+float theta = Enes100.getTheta();
+
+//Turn on Motors
+speedControl(); 
+//Get distance using ultrasonic sensor
+ultrasonic_Distance();
+//Move forward
+forward_Control();
+delay(1000);
+
+Enes100.println("This is distance: ");
+Enes100.println(distance);
+
 delay(10);
 //Enes100.println(theta); //print theta to vision system
 //delay(10); //use unsigned long from above
 
-if (distance > 24 && distance < 26){
+//Height
+if (distance > 56 && distance < 62){
 Enes100.println("The height of the box is 26 cm!");
+stop_OSV();
+delay(100000000);
 }
-else if (distance > 15 && distance < 18){
+else if (distance > 36 && distance < 42){
 Enes100.println("The height of the box is 18 cm!");
+stop_OSV();
+delay(100000000);
 }
-else if (distance > 9 && distance < 13.5) {
-  Enes100.println("The height of the box is 13.5 cm!");
+else if (distance > 21 && distance < 31) {
+Enes100.println("The height of the box is 13.5 cm!");
+stop_OSV();
+delay(100000000);
 }
 
 }
-
