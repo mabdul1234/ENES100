@@ -5,6 +5,8 @@ float x, y, theta;
 //Used for timing
 unsigned long e = 10;  
 
+boolean heightFound = false;
+
 //Defines variable duration used for finding time of wave (ULTRASONIC)
 float duration;
 
@@ -47,7 +49,6 @@ void forward_Control(){
  digitalWrite(in6, LOW);
  digitalWrite(in7, HIGH);
  digitalWrite(in8, LOW);
- delay(1000);
 }
 
 void back_Control(){
@@ -201,7 +202,9 @@ speedControl();
 ultrasonic_Distance();
 //Move forward
 forward_Control();
-delay(1000);
+
+
+
 
 Enes100.println("This is distance: ");
 Enes100.println(distance);
@@ -211,20 +214,25 @@ delay(10);
 //delay(10); //use unsigned long from above
 
 //Height
-if (distance > 56 && distance < 62){
-Enes100.println("The height of the box is 26 cm!");
+if (!heightFound) {
+if (distance > 70){
+Enes100.println("The height of the box is 26.5 cm!");
+heightFound = true;
 stop_OSV();
-delay(100000000);
+delay(10000);
 }
-else if (distance > 36 && distance < 42){
-Enes100.println("The height of the box is 18 cm!");
+else if (distance > 60 && distance < 70){
+Enes100.println("The height of the box is 17.5 cm!");
+heightFound = true;
 stop_OSV();
-delay(100000000);
+delay(10000);
 }
-else if (distance > 21 && distance < 31) {
-Enes100.println("The height of the box is 13.5 cm!");
+else {
+Enes100.println("The height of the box is 13 cm!");
+heightFound = true;
 stop_OSV();
-delay(100000000);
+delay(10000);
+}
 }
 
 }
