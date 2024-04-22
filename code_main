@@ -211,6 +211,9 @@ speedControl();
 while (theta > 0) {
   start_turning();
 }
+stop_OSV();
+forward_Control(); //will set it back so that it defaults to going straight
+
 
 while (x < 3.5){
 forward_Control();
