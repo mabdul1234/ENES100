@@ -113,7 +113,10 @@ digitalWrite(in7, LOW);
 digitalWrite(in8, HIGH);
 }
 
-void start_turning_CCW(){
+
+void start_turning_CCW(float target){
+
+while(abs(theta - target) >= MATH_PI/30) {
 digitalWrite (in1, HIGH);
 digitalWrite (in2, LOW);
 digitalWrite (in3, HIGH);
@@ -122,6 +125,12 @@ digitalWrite(in5, HIGH);
 digitalWrite(in6, LOW);
 digitalWrite(in7, HIGH);
 digitalWrite(in8, LOW);
+delay(25);
+stop_OSV();
+delay(250);
+theta = Enes100.getTheta();
+ }
+stop_OSV();
 }
 
 void ultrasonic_Distance () {
@@ -211,20 +220,7 @@ speedControl();
 
 //Position 1 
 if (y < 1) {
-while (true) {
-start_turning_CW();
-update_Variables();
-if (theta > 1.53 && theta < 1.6) {
-  break;
-}
-delay(10);
-stop_OSV();
-update_Variables();
-delay(20);
-if (theta > 1.53 && theta < 1.6) {
-  break;
-}
-}
+start_turning_CCW(1.57);
 }
 stop_OSV();
 delay(1000);
