@@ -91,6 +91,61 @@ void move_right(){
  digitalWrite(in8, LOW);
 }
 
+void height(){ 
+	int height = 0;
+	boolean heightFound = false;
+	
+	while (!heightFound) {
+		forward_Control();
+		delay(10);
+		stop_OSV();
+		ultrasonic_Distance ();
+		if (distance < 100) {
+			stop_OSV();
+			//add conditionals to test height
+			height = 
+			heightFound = true;
+			Enes100.println(//print height here);
+		}
+	}
+	forward_Control(); 
+	delay(15);
+	stop_OSV();	
+}
+
+void width() {
+
+int xStart;
+
+int xEnd;
+
+int width;
+
+	while (distance < 40) {
+		move_right();
+		ultrasonic_Distance ();
+	}
+	stop_OSV();
+
+	speedControl()
+	move_left();
+	delay (15);
+	stop_OSV();
+
+	xStart = Enes100.getX();
+
+	speedControl()
+	while (distance < 40) {
+		move_left();
+		ultrasonic_Distance ();
+	}
+	stop_OSV();
+	xEnd = Enes100.getX();
+	width = abs(xStart - xEnd);
+
+}
+
+
 void move_left(){
  digitalWrite(in1, LOW); 
  digitalWrite(in2, HIGH);
