@@ -91,6 +91,25 @@ void move_right(){
  digitalWrite(in8, LOW);
 }
 
+void testHeight() {
+
+	int height = 0;
+	boolean heightFound = false;
+	
+	while (!heightFound) {
+		forward_Control();
+		delay(10);
+		stop_OSV();
+		ultrasonic_Distance ();
+		if (distance < 100) {
+			stop_OSV();
+			heightFound = true;
+			Enes100.println(distance);
+		}
+	}
+
+}
+
 void height(){ 
 	int height = 0;
 	boolean heightFound = false;
