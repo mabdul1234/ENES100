@@ -1,167 +1,57 @@
-#include <Enes100.h>
-
-float x, y, theta, duration, distance;
-
-float long_time = 10000;
-
-//Used for timing
-unsigned long e = 10;  
-
-boolean pos1 = false;
-boolean pos2 = false;
-
-//Now LED! is 4, this sounds like the C++ stuff
-#define LED1 4;  
-
-//Motor A Connections:
-int enA = 13;
-int in1 = 12;
-int in2 = 11;
-
-//Motor B Connections:
-int enB = 8;
-int in3 = 10;
-int in4 = 9;
-
-//Motor C Connections:
-int enC = 7;
-int in5 = 6;
-int in6 = 5;
-
-//Motor D Connections:
-int enD = 2;
-int in7 = 4;
-int in8 = 3;
-
-//Ultrasonic Connections 
-int echoPin = 24;
-int trigPin = 26;
-
-void speedControl(){
- int i = 255;
- analogWrite(enA, i);
- analogWrite(enB, i);
- analogWrite(enC, i);
- analogWrite(enD, i);
- delay(20);
-}
-
-void stop_OSV (){
-digitalWrite(in1, LOW);
-digitalWrite(in2, LOW);
-digitalWrite(in3, LOW);
-digitalWrite(in4, LOW);
-digitalWrite(in5, LOW);
-digitalWrite(in6, LOW);
-digitalWrite(in7, LOW);
-digitalWrite(in8, LOW);
-}
-
-void forward_Control(){
- digitalWrite(in1, LOW); 
- digitalWrite(in2, HIGH);
- digitalWrite(in3, LOW);
- digitalWrite(in4, HIGH);
- digitalWrite(in5, HIGH);
- digitalWrite(in6, LOW);
- digitalWrite(in7, HIGH);
- digitalWrite(in8, LOW);
- delay(1000);
-}
-
-void back_Control(){
- digitalWrite(in1, HIGH); 
- digitalWrite(in2, LOW);
- digitalWrite(in3, HIGH);
- digitalWrite(in4, LOW);
- digitalWrite(in5, LOW);
- digitalWrite(in6, HIGH);
- digitalWrite(in7, LOW);
- digitalWrite(in8, HIGH);
-}
-
-void move_right(){
- digitalWrite(in1, HIGH); 
- digitalWrite(in2, LOW);
- digitalWrite(in3, LOW);
- digitalWrite(in4, HIGH);
- digitalWrite(in5, LOW);
- digitalWrite(in6, HIGH);
- digitalWrite(in7, HIGH);
- digitalWrite(in8, LOW);
-}
-
-void testHeight() {
-
-	int height = 0;
-	boolean heightFound = false;
-	
-	while (!heightFound) {
-		forward_Control();
-		delay(10);
-		stop_OSV();
-		ultrasonic_Distance ();
-		if (distance < 100) {
-			stop_OSV();
-			heightFound = true;
-			Enes100.println(distance);
-		}
-	}
-
-}
-
-void height(){ 
-	int height = 0;
-	boolean heightFound = false;
-	
-	while (!heightFound) {
-		forward_Control();
-		delay(10);
-		stop_OSV();
-		ultrasonic_Distance ();
-		if (distance < 100) {
-			stop_OSV();
-			//add conditionals to test height
-			height = 
-			heightFound = true;
-			Enes100.println(//print height here);
-		}
-	}
-	forward_Control(); 
-	delay(15);
-	stop_OSV();	
-}
-
 void width() {
 
-int xStart;
+  int xStart;
+  
+  int xEnd;
+  
+  int width;
+  
+    while (distance < 40) {
+      move_right();
+      ultrasonic_Distance ();
+    }
+    stop_OSV();
+  
+    speedControl();
+    move_left();
+    delay (15);
+    stop_OSV();
+  
+    xStart = Enes100.getX();
+  
+    speedControl();
+    while (distance < 40) {
+      move_left();
+      ultrasonic_Distance ();
+    }
+    stop_OSV();
+    xEnd = Enes100.getX();
+    width = abs(xStart - xEnd);
 
-int xEnd;
+}
 
-int width;
+void moveSide(int dis, char dir) {
 
-	while (distance < 40) {
-		move_right();
-		ultrasonic_Distance ();
-	}
-	stop_OSV();
+  int startY = Enes100.getY();
 
-	speedControl()
-	move_left();
-	delay (15);
-	stop_OSV();
+  if (dir == 'l') { //left
 
-	xStart = Enes100.getX();
+    while (abs(y - startY) < dis) {
+      move_left();
+      y = Enes100.getY();
+    }
+    stop_OSV();
+  }
 
-	speedControl()
-	while (distance < 40) {
-		move_left();
-		ultrasonic_Distance ();
-	}
-	stop_OSV();
-	xEnd = Enes100.getX();
-	width = abs(xStart - xEnd);
+  if (dir == 'r') { //right
 
+     while (abs(y - startY) < dis) {
+      move_right();
+      y = Enes100.getY();
+     }
+      stop_OSV();
+  }
+  
 }
 
 
@@ -190,7 +80,7 @@ digitalWrite(in8, HIGH);
 
 void start_turning_CCW(float target){
 
-while(abs(theta - target) >= MATH_PI/30) {
+while(abs(theta - target) >= 0.02) {
 digitalWrite (in1, HIGH);
 digitalWrite (in2, LOW);
 digitalWrite (in3, HIGH);
@@ -201,22 +91,12 @@ digitalWrite(in7, HIGH);
 digitalWrite(in8, LOW);
 delay(25);
 stop_OSV();
-delay(250);
+delay(25);
 theta = Enes100.getTheta();
  }
 stop_OSV();
 }
 
-void ultrasonic_Distance () {
-digitalWrite(trigPin, LOW);
-delayMicroseconds(20);
-digitalWrite(trigPin, HIGH);
-delayMicroseconds(100);
-//Reads the echoPin, returns the sound wave travel time in microseconds
-duration = pulseIn(echoPin, HIGH);
-//Calculating the distance
-distance = (duration * 0.034 ) / 2;
-}
 
 void update_Variables() {
 
@@ -280,32 +160,37 @@ pinMode(echoPin, INPUT);
 
 void loop() {
 
-//Updates x and Y arcuo marker values
-Enes100.updateLocation(); 
+  //Updates x and Y arcuo marker values
+  Enes100.updateLocation(); 
+  
+  //Is the aruco marker visible?
+  bool v = Enes100.isVisible(); 
+  
+  //Initial location
+  update_Variables();
+  
+  //Turn on Motors
+  speedControl(); 
+  
+  
+  if (y < 1) { //pos 1
+      start_turning_CCW(1.57);
+      stop_OSV();
+      delay(1000);
+      
+    stop_OSV();
+    delay(1000);
+   
+  }
+  else { //pos 2
+      start_turning_CCW(-1.57);
+      stop_OSV();
+      delay(1000);
+      }
 
-//Is the aruco marker visible?
-bool v = Enes100.isVisible(); 
+  testHeight();
 
-//Initial location
-update_Variables();
 
-//Turn on Motors
-speedControl(); 
-
-//Position 1 
-if (y < 1) {
-start_turning_CCW(1.57);
-}
-stop_OSV();
-delay(1000);
-forward_Control();
-
-while (y < 1.1) {
-forward_Control();
-update_Variables();
-}
-stop_OSV();
-delay(1000);
 }
 
 /*
