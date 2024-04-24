@@ -317,6 +317,18 @@ Enes100.println(distance);
 delay(1000);
 }
 
+boolean color_sensor(){
+digitalWrite(s2,LOW);
+digitalWrite(s3,LOW);
+frequency = pulseIn(sensOUT, LOW);
+delay(100);
+if (frequency > 500) {
+  Enes100.println ("The box is red.");
+  return true;
+}
+}
+
+
 void setup() {
 
 //TEST ARUCO MARKER IS 19 BUT ACTUAL IS 231
@@ -330,6 +342,8 @@ pinMode(s1, OUTPUT);
 pinMode(s2, OUTPUT);
 pinMode(s3, OUTPUT);
 
+digitalWrite (s0, HIGH);
+digitalWrite (s1, LOW);
 
 //Motor pins
 pinMode(enA, OUTPUT);
