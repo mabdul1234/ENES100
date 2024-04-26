@@ -1,8 +1,10 @@
 #include <Enes100.h>
 
-float x, y, theta, duration, distance;
+float x, y, theta;
 
 float long_time = 10000;
+
+int frequency;
 
 //Used for timing
 unsigned long e = 10;  
@@ -19,10 +21,7 @@ int echoPin = 24;
 int trig2Pin = 37;
 int echo2Pin = 41;
 
-int duration;
-int distance;
-int duration2;
-int distance2;
+int duration, distance, duration2, distance2;
 
 //color sensor
 
@@ -131,7 +130,7 @@ void testHeight() {
     if (distance < 100) {
       stop_OSV();
       heightFound = true;
-      Enes100.println(distance);
+    
     }
   }
 
@@ -165,13 +164,13 @@ distance2 = (duration2 * 0.034 ) / 2;
 
 }
 
-if (distance > 70 && distance2 > 70) {
+if (distance > 50 && distance2 > 50) {
   Enes100.println("The height is 13 cm!");
 }
-else if (distance < 70 && (distance2 > 70 || distance2 < 0)) {
+else if (distance < 50 && (distance2 > 50 || distance2 < 0)) {
   Enes100.println("The height is 18 cm!");
 }
-else if (distance < 70 && distance2 < 70) {
+else if (distance < 50 && distance2 < 50) {
   Enes100.println("The height is 26 cm!");
 }
 
@@ -263,7 +262,7 @@ digitalWrite(in8, HIGH);
 
 void start_turning_CCW(float target){
 
-while(abs(theta - target) >= 0.02) {
+while(abs(theta - target) >= 0.03) {
 digitalWrite (in1, HIGH);
 digitalWrite (in2, LOW);
 digitalWrite (in3, HIGH);
@@ -272,7 +271,7 @@ digitalWrite(in5, HIGH);
 digitalWrite(in6, LOW);
 digitalWrite(in7, HIGH);
 digitalWrite(in8, LOW);
-delay(25);
+delay(15);
 stop_OSV();
 delay(25);
 theta = Enes100.getTheta();
@@ -287,33 +286,33 @@ Enes100.updateLocation();
 
 while (x < 0 || y < 0 || theta < -3.14 || theta > 3.14) {
 Enes100.updateLocation();
-Enes100.println("This is y: ");
+;
 y = Enes100.getY();
 Enes100.println(y);
-Enes100.println("This is x: ");
+
 x = Enes100.getX();
 Enes100.println(x);
-Enes100.println("This is theta: ");
+
 theta = Enes100.getTheta();
 Enes100.println(theta);
 ultrasonic_Distance();
-Enes100.println("This is distance: ");
+
 Enes100.println(distance);
 delay(1000);
 }
 
 Enes100.println("This is y: ");
 y = Enes100.getY();
-Enes100.println(y);
+
 Enes100.println("This is x: ");
 x = Enes100.getX();
-Enes100.println(x);
+
 Enes100.println("This is theta: ");
 theta = Enes100.getTheta();
-Enes100.println(theta);
+
 ultrasonic_Distance();
 Enes100.println("This is distance: ");
-Enes100.println(distance);
+
 delay(1000);
 }
 
@@ -322,9 +321,13 @@ digitalWrite(s2,LOW);
 digitalWrite(s3,LOW);
 frequency = pulseIn(sensOUT, LOW);
 delay(100);
-if (frequency > 500) {
+if (frequency > 400) {
   Enes100.println ("The box is red.");
   return true;
+} else {
+  Enes100.println(frequency);
+  Enes100.println("The box is not red.");
+  return false;
 }
 }
 
@@ -381,27 +384,44 @@ void loop() {
   
   //Turn on Motors
   speedControl(); 
-  
+
+  y = Enes100.getY();
   
   if (y < 1) { //pos 1
-      start_turning_CCW(1.57);
+      start_turning_CCW(1.53);
       stop_OSV();
       delay(1000);
 
       speedControl();
-      while (y < 1.1) {
+      while (y < 1.23) {
         forward_Control();
         y = Enes100.getY();
       }
-
+      
+      stop_OSV();
+      delay(2000);
       height();
+      delay(2000);
+      color_sensor();
+      delay(1000);
    
   }
-  else { //pos 2
+  else if (y > 1) { //pos 2
+
       start_turning_CCW(-1.57);
       stop_OSV();
       delay(1000);
+
+      speedControl();
+      while (y >0.5) {
+        forward_Control();
+        y = Enes100.getY();
+      }
       
+      stop_OSV();
+      delay(5000);
+      height();
+      color_sensor();
       }
 
  
