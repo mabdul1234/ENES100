@@ -4,6 +4,12 @@ float x, y, theta;
 
 float long_time = 10000;
 
+#include <ezButton.h>
+
+
+ezButton limitSwitch(30);  // create ezButton object that attach to pin 7;
+
+
 int frequencyR, frequencyG, frequencyB;
 
 //Used for timing
@@ -117,6 +123,17 @@ void move_right(){
  digitalWrite(in8, LOW);
 }
 
+boolean touched (){
+    limitSwitch.loop();
+  
+    int state = limitSwitch.getState();
+    if(state == HIGH)
+      return false;
+    else
+      return true;
+      
+}
+
 void testHeight() {
 
   int height = 0;
@@ -139,7 +156,7 @@ void testHeight() {
 
 }
 
-void height(){ 
+int height(){ 
 
 for (int i = 0; i < 20; i++) {
 
@@ -164,51 +181,110 @@ distance2 = (duration2 * 0.034 ) / 2;
 
 }
 
-if (distance > 50 && distance2 > 50) {
-  Enes100.println("The height is 13 cm!");
+
+if ((distance2 > 30 && distance > 30)) {
+
+  return 13.5;
 }
-else if (distance < 50 && (distance2 > 50 || distance2 < 0)) {
-  Enes100.println("The height is 18 cm!");
+else if (distance2 < 30 && distance > 50) {
+
+  return 18;
 }
-else if (distance < 50 && distance2 < 50) {
-  Enes100.println("The height is 26 cm!");
-}
+else{
 
-
-
-
-
+  return 26;
 }
 
-void width() {
+
+
+
+
+
+}
+
+float width(int height, boolean isRed) {
 
   int xStart;
   
   int xEnd;
   
-  int width;
+  float width;
+
   
-    while (distance < 40) {
-      move_right();
-      ultrasonic_Distance ();
+    while (touched()) {
+      move_left();
     }
     stop_OSV();
-  
+    
+ //up to here is working
+ 
     speedControl();
-    move_left();
-    delay (15);
+
+    while (!touched()) {
+      move_right();
+    }
+   
     stop_OSV();
   
     xStart = Enes100.getX();
   
     speedControl();
-    while (distance < 40) {
-      move_left();
-      ultrasonic_Distance ();
+    while (touched()) {
+      move_right();
     }
     stop_OSV();
     xEnd = Enes100.getX();
     width = abs(xStart - xEnd);
+
+    if (height == 13 && !isRed) {
+      if (max(abs(27 - width), abs(18 - width)) == abs(27 - width)) {
+        return 27;
+      }
+      else {
+        return 18;
+      }
+    }
+    else if (height == 13 && isRed) {
+       if (min(abs(27 - width), abs(18 - width)) == abs(27 - width)) {
+        return 27;
+       }else {
+        return 18;      
+       }
+    }
+    else if (height == 18 && !isRed) {
+      if(max(abs(27 - width), abs(13.5 - width)) == abs(27 - width)) {
+        return 27;
+      }
+        else {
+          return 13.5;    
+      }
+    }
+    else if (height == 18 && isRed) {
+      if (min(abs(27 - width), abs(13.5 - width)) == abs(27 - width)) {
+        return 27;
+      }
+      else {
+        return 13.5;
+      }    
+    }
+    else if (height == 13 && !isRed){ //height is 26
+      if (max(abs(18 - width), abs(13.5 - width)) == abs(18 - width)) {
+        return 18;
+      }
+      else {
+        return 13.5;
+      }
+    }
+    else {
+      if (min(abs(18 - width), abs(13.5 - width)) == abs(18 - width)) {
+        return 18;
+      }
+      else {
+        return 13.5;
+      }
+    }
+
+    
 
 }
 
@@ -288,30 +364,27 @@ while (x < 0 || y < 0 || theta < -3.14 || theta > 3.14) {
 Enes100.updateLocation();
 ;
 y = Enes100.getY();
-Enes100.println(y);
+
 
 x = Enes100.getX();
-Enes100.println(x);
+
 
 theta = Enes100.getTheta();
-Enes100.println(theta);
-ultrasonic_Distance();
 
-Enes100.println(distance);
+
 delay(1000);
 }
 
-Enes100.println("This is y: ");
+
 y = Enes100.getY();
 
-Enes100.println("This is x: ");
 x = Enes100.getX();
 
-Enes100.println("This is theta: ");
+
 theta = Enes100.getTheta();
 
 ultrasonic_Distance();
-Enes100.println("This is distance: ");
+
 
 delay(1000);
 }
@@ -335,11 +408,10 @@ digitalWrite(s3,HIGH);
 frequencyB = pulseIn(sensOUT, LOW);
 delay(100);
 
-if (((frequencyB - frequencyR) > 100) && ((frequencyG - frequencyR) > 100)) {
+if (((frequencyB - frequencyR) > 100) && ((frequencyG - frequencyR) > 100) && frequencyR < 250) {
   Enes100.println ("The box is red.");
   return true;
 } else {
-  Enes100.println(frequency);
   Enes100.println("The box is not red.");
   return false;
 }
@@ -347,6 +419,8 @@ if (((frequencyB - frequencyR) > 100) && ((frequencyG - frequencyR) > 100)) {
 
 
 void setup() {
+
+  limitSwitch.setDebounceTime(50); // set debounce time to 50 milliseconds
 
 //TEST ARUCO MARKER IS 19 BUT ACTUAL IS 231
 Enes100.begin("CRASH", CRASH_SITE, 231, 50, 22); 
@@ -407,54 +481,65 @@ void loop() {
       delay(1000);
 
       speedControl();
-      while (y < 1.23) {
+
+      while(y < 1) {
+        forward_Control();
+        y = Enes100.getY();
+      }
+      stop_OSV();
+      start_turning_CCW(1.5);
+      stop_OSV();
+      delay(1000);
+      speedControl();
+      while (y < 1.7) {
         forward_Control();
         y = Enes100.getY();
       }
       
       stop_OSV();
       delay(2000);
-      height();
+      Enes100.print("The height is: ");
+      Enes100.println(height());
       delay(2000);
       color_sensor();
       delay(1000);
+        while(!touched()) {
+          move_right();
+        }
+      float width2 = width(height(), color_sensor());
+      Enes100.print("Width: ");
+      Enes100.println(width2);
    
   }
   else if (y > 1) { //pos 2
 
-      start_turning_CCW(-1.57);
+      start_turning_CCW(-1.61);
       stop_OSV();
       delay(1000);
+  speedControl();
 
+      while(y > 1) {
+        forward_Control();
+        y = Enes100.getY();
+      }
+      stop_OSV();
+      start_turning_CCW(-1.61);
+      stop_OSV();
+      delay(1000);
       speedControl();
-      while (y >0.5) {
+      while (y > 0.77) {
         forward_Control();
         y = Enes100.getY();
       }
       
       stop_OSV();
-      delay(5000);
+      delay(2000);
       height();
+      delay(2000);
       color_sensor();
+      delay(1000);
+      
       }
 
- 
-
 
 }
-
-/*
-//Height MIGHT NOT BE USED CUZ NEW ULTRASONIC
-if (distance > 56 && distance < 62){
-Enes100.println("The height of the box is 26 cm!");
-stop_OSV();
-}
-else if (distance > 36 && distance < 42){
-Enes100.println("The height of the box is 18 cm!");
-stop_OSV();
-}
-else if (distance > 21 && distance < 31) {
-Enes100.println("The height of the box is 13.5 cm!");
-stop_OSV();
-}
-*/
