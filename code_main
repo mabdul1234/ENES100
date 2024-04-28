@@ -4,7 +4,7 @@ float x, y, theta;
 
 float long_time = 10000;
 
-int frequency;
+int frequencyR, frequencyG, frequencyB;
 
 //Used for timing
 unsigned long e = 10;  
@@ -317,11 +317,25 @@ delay(1000);
 }
 
 boolean color_sensor(){
+//Red
 digitalWrite(s2,LOW);
 digitalWrite(s3,LOW);
-frequency = pulseIn(sensOUT, LOW);
+frequencyR = pulseIn(sensOUT, LOW);
 delay(100);
-if (frequency > 400) {
+
+//Green
+digitalWrite(s2,HIGH);
+digitalWrite(s3,HIGH);
+frequencyG = pulseIn(sensOUT, LOW);
+delay(100);
+
+//Blue
+digitalWrite(s2,LOW);
+digitalWrite(s3,HIGH);
+frequencyB = pulseIn(sensOUT, LOW);
+delay(100);
+
+if (((frequencyB - frequencyR) > 100) && ((frequencyG - frequencyR) > 100)) {
   Enes100.println ("The box is red.");
   return true;
 } else {
