@@ -68,6 +68,25 @@ void speedControl(){
  analogWrite(enD, i);
 }
 
+float adjustWidth(float width) {
+    // Calculate absolute differences
+    float diff_27 = abs(27 - width);
+    float diff_18 = abs(18 - width);
+    float diff_13_5 = abs(13.5 - width);
+
+    // Find the minimum difference
+    float min_diff = min(min(diff_27, diff_18), diff_13_5);
+
+    // Adjust width based on the minimum difference
+    if (min_diff == diff_27) {
+        return 27;
+    } else if (min_diff == diff_18) {
+        return 18;
+    } else {
+        return 13.5;
+    }
+}
+
 void stop_OSV (){
 digitalWrite(in1, LOW);
 digitalWrite(in2, LOW);
@@ -234,54 +253,46 @@ float width(int height, boolean isRed) {
     }
     stop_OSV();
     xEnd = Enes100.getX();
-    width = abs(xStart - xEnd);
+    width = adjustWidth(abs(xStart - xEnd));
 
     if (height == 13 && !isRed) {
-      if (max(abs(27 - width), abs(18 - width)) == abs(27 - width)) {
-        return 27;
-      }
-      else {
+
+      if (width == 27) {
         return 18;
       }
+      else {
+        return 27;
+      }
+     
     }
     else if (height == 13 && isRed) {
-       if (min(abs(27 - width), abs(18 - width)) == abs(27 - width)) {
-        return 27;
-       }else {
-        return 18;      
-       }
+      return width;   
     }
-    else if (height == 18 && !isRed) {
-      if(max(abs(27 - width), abs(13.5 - width)) == abs(27 - width)) {
-        return 27;
-      }
+    else if (height == 18 && !isRed) { 
+
+        if (width == 27) {
+          return 13.5;
+        }
         else {
-          return 13.5;    
-      }
+          return 27;
+        }
+      
     }
     else if (height == 18 && isRed) {
-      if (min(abs(27 - width), abs(13.5 - width)) == abs(27 - width)) {
-        return 27;
-      }
-      else {
-        return 13.5;
-      }    
+     return width;
     }
-    else if (height == 13 && !isRed){ //height is 26
-      if (max(abs(18 - width), abs(13.5 - width)) == abs(18 - width)) {
-        return 18;
-      }
-      else {
-        return 13.5;
-      }
+    else if (height == 27 && !isRed){ 
+
+        if (width == 18) {
+          return 13.5;
+        }
+        else {
+          return 18;
+        }
+     
     }
-    else {
-      if (min(abs(18 - width), abs(13.5 - width)) == abs(18 - width)) {
-        return 18;
-      }
-      else {
-        return 13.5;
-      }
+    else { //height == 27 and isRed
+      return width;   
     }
 
     
