@@ -432,6 +432,63 @@ if (((frequencyB - frequencyR) > 100) && ((frequencyG - frequencyR) > 100) && fr
 }
 }
 
+void endnav_pos1(){
+  while (x < 2){
+    forward_Control();
+    boolean dist = (distance2 < 20);
+    while (dist){
+      stop_OSV();
+      delay(1000);
+      moveSide(0.75, r);
+    }
+    Enes100.getX();
+  }
+  stop_OSV();
+  delay(1000);
+
+  while (x < 3.5){
+    forward_Control();
+    boolean dist = (distance2 < 20);
+    while (dist){
+      stop_OSV();
+      delay(1000);
+      moveSide(0.75, l);
+    }
+    Enes100.getX();
+  }
+  stop_OSV();
+  delay(1000);
+  }
+
+}
+
+void endnav_pos2(){
+  while (x < 2){
+    forward_Control();
+    boolean dist = (distance2 < 20);
+    while (dist){
+      stop_OSV();
+      delay(1000);
+      moveSide(0.75, l);
+    }
+    Enes100.getX();
+  }
+  stop_OSV();
+  delay(1000);
+
+  while (x < 3.5){
+    forward_Control();
+    boolean dist = (distance2 < 20);
+    while (dist){
+      stop_OSV();
+      delay(1000);
+      moveSide(0.75, r);
+    }
+    Enes100.getX();
+  }
+  stop_OSV();
+  delay(1000);
+}
 
 void setup() {
 
