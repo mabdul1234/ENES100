@@ -188,7 +188,6 @@ duration = pulseIn(echoPin, HIGH);
 //Calculating the distance
 distance = (duration * 0.034 ) / 2;
 
-
 digitalWrite(trig2Pin, LOW);
 delayMicroseconds(20);
 digitalWrite(trig2Pin, HIGH);
@@ -197,29 +196,23 @@ delayMicroseconds(100);
 duration2 = pulseIn(echo2Pin, HIGH);
 //Calculating the distance
 distance2 = (duration2 * 0.034 ) / 2;
-
 }
 
-
 if ((distance2 > 30 && distance > 30)) {
-
-  return 13.5;
+  
+  return 13;
 }
 else if (distance2 < 30 && distance > 50) {
 
   return 18;
 }
 else{
-
   return 26;
 }
-
-
-
-
-
-
 }
+
+
+
 
 float width2(int height, boolean isRed) {
 
@@ -339,7 +332,9 @@ void move_left(){
  digitalWrite(in8, HIGH);
 }
 
-void start_turning_CW (){
+void start_turning_CW(float target){
+
+while(abs(theta - target) >= 0.03) {
 digitalWrite (in1, LOW);
 digitalWrite (in2, HIGH);
 digitalWrite (in3, LOW);
@@ -348,8 +343,13 @@ digitalWrite(in5, LOW);
 digitalWrite(in6, HIGH);
 digitalWrite(in7, LOW);
 digitalWrite(in8, HIGH);
+delay(15);
+stop_OSV();
+delay(25);
+theta = Enes100.getTheta();
+ }
+stop_OSV();
 }
-
 
 void start_turning_CCW(float target){
 
@@ -432,64 +432,6 @@ if (((frequencyB - frequencyR) > 100) && ((frequencyG - frequencyR) > 100) && fr
 }
 }
 
-void endnav_pos1(){
-  while (x < 2){
-    forward_Control();
-    boolean dist = (distance2 < 20);
-    while (dist){
-      stop_OSV();
-      delay(1000);
-      moveSide(0.75, r);
-    }
-    Enes100.getX();
-  }
-  stop_OSV();
-  delay(1000);
-
-  while (x < 3.5){
-    forward_Control();
-    boolean dist = (distance2 < 20);
-    while (dist){
-      stop_OSV();
-      delay(1000);
-      moveSide(0.75, l);
-    }
-    Enes100.getX();
-  }
-  stop_OSV();
-  delay(1000);
-  }
-
-}
-
-void endnav_pos2(){
-  while (x < 2){
-    forward_Control();
-    boolean dist = (distance2 < 20);
-    while (dist){
-      stop_OSV();
-      delay(1000);
-      moveSide(0.75, l);
-    }
-    Enes100.getX();
-  }
-  stop_OSV();
-  delay(1000);
-
-  while (x < 3.5){
-    forward_Control();
-    boolean dist = (distance2 < 20);
-    while (dist){
-      stop_OSV();
-      delay(1000);
-      moveSide(0.75, r);
-    }
-    Enes100.getX();
-  }
-  stop_OSV();
-  delay(1000);
-}
-
 void setup() {
 
   limitSwitch.setDebounceTime(50); // set debounce time to 50 milliseconds
@@ -527,8 +469,6 @@ pinMode(trigPin, OUTPUT);
 pinMode(trig2Pin, OUTPUT);
 pinMode(echoPin, INPUT);
 pinMode(echo2Pin, INPUT);
-
-
 }
 
 void loop() {
@@ -547,7 +487,7 @@ void loop() {
 
   y = Enes100.getY();
   
-  if (y < 1) { //pos 1
+ if (y < 1) { //pos 1
       start_turning_CCW(1.53);
       stop_OSV();
       delay(1000);
@@ -559,9 +499,11 @@ void loop() {
         y = Enes100.getY();
       }
       stop_OSV();
-      start_turning_CCW(1.5);
+      start_turning_CW(1.5);
       stop_OSV();
       delay(1000);
+
+      Enes100.updateLocation();
 
       while(y < 1.2) {
         forward_Control();
@@ -576,12 +518,9 @@ void loop() {
       forward_Control();
       delay(6000);
       
-      
-      
       stop_OSV();
       delay(2000);
 
-      delay(2000);
       color_sensor();
       delay(1000);
         while(!touched()) {
@@ -591,44 +530,166 @@ void loop() {
       Enes100.print("Width: ");
       Enes100.println(width3);
 
-      while (y > 1.3) {
+      //End Nav Pos 1
+      while (x < 2){
         speedControl();
-        back_Control();
+        start_turning_CW(0);
+        forward_Control();
+        while (touched()){
+          back_Control();
+          delay(100);
+          if (y > 1){
+            move_right();
+            delay(6000);
+          }
+          else{
+            move_left();
+            delay(6000);
+          }
+          touched();
+        }
+        x = Enes100.getX();
       }
-      forward_Control();
-      stop_OSV();
-      start_turning_CCW(0);
-   
-  }
-  else if (y > 1) { //pos 2
-
-      start_turning_CCW(-1.61);
       stop_OSV();
       delay(1000);
-  speedControl();
+      start_turning_CW(-0.1);
+
+        while (x < 3){
+        speedControl();
+        forward_Control();
+        while (touched()){ 
+          back_Control();
+          delay(100);
+          y = Enes100.getY();
+            if (y > 1.2){
+            move_right();
+            delay(6000);
+          }
+          else{
+            move_left();
+            delay(6000);
+          }
+          touched();
+        }
+        x = Enes100.getX();
+      }
+      Enes100.println("We have now cleared the second obstacle");
+      stop_OSV();
+      delay(1000);
+      start_turning_CCW(0);
+      Enes100.println("Adjustment1");
+      forward_Control();
+      delay(1000);
+      start_turning_CCW(0);
+      Enes100.println("Adjustment2");
+
+      while (y < 1.5){
+        Enes100.println("Now lets check our y value");
+        speedControl();
+        move_left();
+      }
+
+      stop_OSV();
+      delay(1000);
+
+      while (x < 3.8){
+        speedControl();
+        forward_Control();
+      }  
+      stop_OSV();
+      delay(10000);  
+}
+
+/*
+else {
+  start_turning_CCW(-1.53);
+      stop_OSV();
+      delay(1000);
+
+      speedControl();
 
       while(y > 1) {
         forward_Control();
         y = Enes100.getY();
       }
       stop_OSV();
-      start_turning_CCW(-1.61);
+      start_turning_CW(-1.5);
       stop_OSV();
       delay(1000);
-      speedControl();
-      while (y > 0.77) {
+
+      while(y < 0.8) {
         forward_Control();
         y = Enes100.getY();
       }
+      stop_OSV();
+      Enes100.print("The height is: ");
+      int height2 = height();
+      Enes100.println(height2);     
+      
+      speedControl();
+      forward_Control();
+      delay(6000);
       
       stop_OSV();
       delay(2000);
-      height();
+
       delay(2000);
       color_sensor();
       delay(1000);
-      
+        while(!touched()) {
+          move_left();
+        }
+      float width3 = width2(height2, color_sensor());
+      Enes100.print("Width: ");
+      Enes100.println(width3);
+
+      start_turning_CCW(0);
+
+      //End Nav Pos 1
+      while (x < 2.2){
+        speedControl();
+        forward_Control();
+        while (touched()){
+          back_Control();
+          delay(100);
+          move_left();
+          delay(4000);
+          touched();
+        }
+        x = Enes100.getX();
       }
+      stop_OSV();
+      delay(1000);
+      start_turning_CW(0);
 
+        while (x < 2.9){
+        speedControl();
+        forward_Control();
+        while (touched()){
+          back_Control();
+          delay(100);
+          move_right();
+          delay(5000);
+          touched();
+        }
+        x = Enes100.getX();
+      }
+      stop_OSV();
+      delay(1000);
 
+      while (y < 1.3){
+        speedControl();
+        move_left();
+      }
+      stop_OSV();
+      delay(500);
+
+      while (x < 3.7){
+        speedControl();
+        forward_Control();
+      }  
+      stop_OSV();
+      delay(10000); 
+}
+*/
 }
