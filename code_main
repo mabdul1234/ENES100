@@ -583,19 +583,24 @@ void loop() {
       start_turning_CCW(0);
       Enes100.println("Adjustment2");
 
-      while (y < 1.5){
+      
         Enes100.println("Now lets check our y value");
         speedControl();
         move_left();
-      }
+        delay(15000);
 
       stop_OSV();
       delay(1000);
 
-      while (x < 3.8){
+      speedControl(); 
+      move_right();
+      delay(2000);
+      
+
+    
         speedControl();
         forward_Control();
-      }  
+        delay(10000);
       stop_OSV();
       delay(10000);  
 }
