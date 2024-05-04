@@ -15,7 +15,7 @@ int frequencyR, frequencyG, frequencyB;
 //Used for timing
 unsigned long e = 10;  
 
-boolean pos1 = false;
+boolean pos1 = false;   
 boolean pos2 = false;
 
 //Now LED! is 4, this sounds like the C++ stuff
@@ -470,243 +470,280 @@ pinMode(echo2Pin, INPUT);
 
 void loop() {
 
-  //Updates x and Y arcuo marker values
-  Enes100.updateLocation(); 
+//Updates x and Y arcuo marker values
+Enes100.updateLocation(); 
   
-  //Is the aruco marker visible?
-  bool v = Enes100.isVisible(); 
+//Is the aruco marker visible?
+bool v = Enes100.isVisible(); 
   
-  //Initial location
-  update_Variables();
+//Initial location
+update_Variables();
   
-  //Turn on Motors
-  speedControl(); 
+//Turn on Motors
+speedControl(); 
 
-  y = Enes100.getY();
+y = Enes100.getY();
   
- if (y < 1) { //pos 1
-      start_turning_CCW(1.53);
-      stop_OSV();
-      delay(1000);
 
-      speedControl();
+//POSITION 1
+if (y < 1) { 
+  start_turning_CCW(1.53);
+  stop_OSV();
+  delay(1000);
 
-      while(y < 1) {
-        forward_Control();
-        y = Enes100.getY();
-      }
-      stop_OSV();
-      start_turning_CW(1.5);
-      stop_OSV();
-      delay(1000);
+  speedControl();
 
-      Enes100.updateLocation();
-
-      while(y < 1.2) {
-        forward_Control();
-        y = Enes100.getY();
-      }
-      stop_OSV();
-      Enes100.print("The height is: ");
-      int height2 = height();
-      Enes100.println(height2);     
+  while(y < 1) {
+    forward_Control();
+    y = Enes100.getY();
+  }
       
-      speedControl();
-      forward_Control();
-      delay(6000);
+  stop_OSV();
+  start_turning_CW(1.5);
+  stop_OSV();
+  delay(1000);
+
+  Enes100.updateLocation();
+
+  while(y < 1.2) {
+    forward_Control();
+    y = Enes100.getY();
+  }
+
+  stop_OSV();
+  Enes100.print("The height is: ");
+  int height2 = height();
+  Enes100.println(height2);     
+
+  //Ram into the box
+  speedControl();
+  forward_Control();
+  delay(6000);
       
-      stop_OSV();
-      delay(2000);
+  stop_OSV();
+  delay(2000);
 
-      color_sensor();
-      delay(1000);
-        while(!touched()) {
-          move_right();
-        }
-      float width3 = width2(height2, color_sensor());
-      Enes100.print("Width: ");
-      Enes100.println(width3);
+  color_sensor();
+  delay(1000);
 
-      //CODE FOR ARUCO MARKER
-      start_turning_CCW(2.2);
+  while(!touched()) {
+    move_right();
+  }
+      
+  float width3 = width2(height2, color_sensor());
+  Enes100.print("Width: ");
+  Enes100.println(width3);
+
+  //CODE FOR ARUCO MARKER
+  start_turning_CCW(2.2);
+  stop_OSV();
+  delay(500);
+
+  //Face obstacles
+  start_turning_CW(0);
+
+  //End Nav Pos 1
+
+  //obstacle 1
+  while (x < 2){
+    forward_Control();
+
+    while (touched()){
       stop_OSV();
       delay(500);
-
-      //End Nav Pos 1
-      while (x < 2){
-        speedControl();
-        start_turning_CW(0);
-        forward_Control();
-        while (touched()){
-          stop_OSV();
-          delay(500);
-          back_Control();
-          delay(500);
-          if (y > 1){
-            move_right();
-            delay(6000);
-          }
-          touched();
-        }
-        x = Enes100.getX();
-      }
-      stop_OSV();
-      delay(2000);
-      start_turning_CW(-0.1);
+      back_Control();
+      delay(500);
       move_right();
-      delay(1000);
+      delay(6000);
 
-        while (x < 3){
-        speedControl();
-        forward_Control();
-        y = Enes100.getY();
+      //Update touched
+      touched();
+      }
+    x = Enes100.getX();
+  }
 
-        Enes100.println(touched());
+  stop_OSV();
+  delay(1000);
+  start_turning_CW(0);
 
-        if (touched() == 1 && y > 1.2){ 
-          back_Control();
-          delay(500);
-          move_right();
-          delay(6000);
-          Enes100.println(touched());
-          }
+  //Ram into right wall
+  move_right();
+  delay(15000);
 
-          else if (touched() == 1 && y < 1.2){
-            back_Control();
-            delay(500);
-            move_left();
-            delay(6000);
-          }
-        }
-        x = Enes100.getX(); 
-      speedControl();
+  //Move left a bit
+  move_left();
+  delay(2000);
+
+  start_turning_CW(0);
+
+  //obstacle 2
+  while (x < 3.2){
+    forward_Control();
+
+    while (touched()) {
+      stop_OSV();
+      delay(500);
+      back_Control();
+      delay(500);
+      move_left();
+      delay(6000);
+
+      //Update touched
+      touched();
+    }
+    x = Enes100.getX();
+  }  
+
+//Ram into left wall
 move_left();
-delay(15000);
+delay(10000);
 
 stop_OSV();
-delay(2000);
+delay(1000);
 
+//Position to go under limbo
 speedControl(); 
 move_right();
 delay(3000);
-      
+
+//Go under limbo   
 speedControl();
 forward_Control();
 delay(4000);
 stop_OSV();
 delay(10000);
- }
+}
 
 else {
   start_turning_CCW(-1.6);
-      stop_OSV();
-      delay(1000);
+  stop_OSV();
+  delay(1000);
 
-      speedControl();
+  speedControl();
 
-      while(y > 1) {
-        forward_Control();
-        y = Enes100.getY();
-      }
-      stop_OSV();
-      start_turning_CW(-1.55);
-      stop_OSV();
-      delay(1000);
-
-      while(y < 0.7) {
-        forward_Control();
-        y = Enes100.getY();
-      }
-      stop_OSV();
-      Enes100.print("The height is: ");
-      int height2 = height();
-      Enes100.println(height2);     
+  while(y > 1) {
+    forward_Control();
+    y = Enes100.getY();
+  }
       
-      speedControl();
-      forward_Control();
-      delay(10000);
+  stop_OSV();
+  start_turning_CW(-1.57);
+  stop_OSV();
+  delay(1000);
+
+  Enes100.updateLocation();
+
+  while(y > 0.7) {
+    forward_Control();
+    y = Enes100.getY();
+  }
+
+  stop_OSV();
+  Enes100.print("The height is: ");
+  int height2 = height();
+  Enes100.println(height2);     
+
+  //Ram into the box
+  speedControl();
+  forward_Control();
+  delay(6000);
       
+  stop_OSV();
+  delay(2000);
+
+  color_sensor();
+  delay(1000);
+
+  while(!touched()) {
+    move_right();
+  }
+      
+  float width3 = width2(height2, color_sensor());
+  Enes100.print("Width: ");
+  Enes100.println(width3);
+
+  //CODE FOR ARUCO MARKER
+  start_turning_CCW(-1.1);
+  stop_OSV();
+  delay(500);
+
+  //Face obstacles
+  back_Control();
+  delay(800);
+  start_turning_CW(0);
+
+  //End Nav Pos 2
+
+  //Obstacle 1
+  while (x < 2){
+    forward_Control();
+
+    //When touched, move back and move left
+    while (touched()){
       stop_OSV();
-      delay(2000);
-
-      color_sensor();
-      delay(1000);
-        while(!touched()) {
-          move_right();
-        }
-      float width3 = width2(height2, color_sensor());
-      Enes100.print("Width: ");
-      Enes100.println(width3);
-
+      delay(500);
       back_Control();
-      delay(2000);
-      //End Nav Pos 1
-      while (x < 2){
-        speedControl();
-        start_turning_CCW(0);
-        forward_Control();
-        while (touched()){
-          back_Control();
-          delay(500);
-          if (y > 1){
-            move_right();
-            delay(6000);
-          }
-          else{
-            move_left();
-            delay(6000);
-          }
-          touched();
-        }
-        x = Enes100.getX();
+      delay(500);
+      move_left();
+      delay(6000);
+
+      //Update touched
+      touched();
       }
+    x = Enes100.getX();
+  }
+
+  stop_OSV();
+  delay(1000);
+  start_turning_CW(0);
+
+  //Ram into right wall
+  move_right();
+  delay(15000);
+
+  //Move left a bit
+  move_left();
+  delay(2000);
+
+  start_turning_CW(0);
+
+  //obstacle 2
+  while (x < 3.2){
+    forward_Control();
+
+    //When touched, move back, and move left
+    while (touched()) {
       stop_OSV();
-      delay(1000);
-      start_turning_CW(-0.1);
+      delay(500);
+      back_Control();
+      delay(500);
+      move_left();
+      delay(6000);
 
-        while (x < 3){
-        speedControl();
-        forward_Control();
-        while (touched() || getDistanceLower() < 5){
-          back_Control();
-          delay(100);
-          y = Enes100.getY();
-          if (y > 1.2){
-            move_right();
-            delay(6000);
-          }
-          else{
-            move_left();
-            delay(6000);
-          }
-          touched();
-          getDistanceLower();
-        }
-        x = Enes100.getX();
-      }
-      stop_OSV();
-      delay(1000);
-      start_turning_CCW(0);
-      forward_Control();
-      delay(1000);
+      //Update touched
+      touched();
+    }
+    x = Enes100.getX();
+  }  
 
-        speedControl();
-        move_left();
-        delay(15000);
+//Ram into left wall
+move_left();
+delay(10000);
 
-      stop_OSV();
-      delay(2000);
+stop_OSV();
+delay(1000);
 
-      speedControl(); 
-      move_right();
-      delay(3000);
-      
+//Position to go under limbo
+speedControl(); 
+move_right();
+delay(3000);
 
-    
-        speedControl();
-        forward_Control();
-        delay(2000);
-      stop_OSV();
-      delay(10000);  
+//Go under limbo   
+speedControl();
+forward_Control();
+delay(4000);
+stop_OSV();
+delay(10000);
 }
+
 }
