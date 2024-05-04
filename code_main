@@ -147,9 +147,16 @@ boolean touched (){
   
     int state = limitSwitch.getState();
     if(state == HIGH)
+    {
       return false;
+      Enes100.println("false");
+    }
     else
+    {
       return true;
+      Enes100.println("true");
+    }
+
       
 }
 
@@ -520,71 +527,75 @@ void loop() {
       Enes100.print("Width: ");
       Enes100.println(width3);
 
+      //CODE FOR ARUCO MARKER
+      start_turning_CCW(2.2);
+      stop_OSV();
+      delay(500);
+
       //End Nav Pos 1
       while (x < 2){
         speedControl();
         start_turning_CW(0);
         forward_Control();
         while (touched()){
+          stop_OSV();
+          delay(500);
           back_Control();
-          delay(100);
+          delay(500);
           if (y > 1){
             move_right();
             delay(6000);
           }
-          else{
-            move_left();
-            delay(6000);
-          }
           touched();
         }
         x = Enes100.getX();
       }
       stop_OSV();
-      delay(1000);
+      delay(2000);
       start_turning_CW(-0.1);
+      move_right();
+      delay(1000);
 
         while (x < 3){
         speedControl();
         forward_Control();
-        while (touched()){ 
+        y = Enes100.getY();
+
+        Enes100.println(touched());
+
+        if (touched() == 1 && y > 1.2){ 
           back_Control();
-          delay(100);
-          y = Enes100.getY();
-            if (y > 1.5){
-            back_Control();
-            delay(1000);
-            move_right();
-            delay(6000);
+          delay(500);
+          move_right();
+          delay(6000);
+          Enes100.println(touched());
           }
-          else{
+
+          else if (touched() == 1 && y < 1.2){
+            back_Control();
+            delay(500);
             move_left();
             delay(6000);
           }
-          touched();
         }
-        x = Enes100.getX();
-      }
-      stop_OSV();
-      delay(1000);
-      
-        speedControl();
-        move_left();
-        delay(15000);
+        x = Enes100.getX(); 
+      speedControl();
+move_left();
+delay(15000);
 
-      stop_OSV();
-      delay(2000);
+stop_OSV();
+delay(2000);
 
-      speedControl(); 
-      move_right();
-      delay(3000);
+speedControl(); 
+move_right();
+delay(3000);
       
-        speedControl();
-        forward_Control();
-        delay(2000);
-      stop_OSV();
-      delay(10000);  
-}
+speedControl();
+forward_Control();
+delay(4000);
+stop_OSV();
+delay(10000);
+ }
 
 else {
   start_turning_CCW(-1.6);
