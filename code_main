@@ -325,7 +325,7 @@ void placeMarker2(boolean isRed, int height) {
   move_right();
   delay(4000);
   back_Control(); 
-  delay(4000);
+  delay(5000);
   move_left();
   delay(7000);
   move_right();
@@ -364,7 +364,7 @@ void placeMarker1(boolean isRed, int height) {
   move_right();
   delay(7000);
   forward_Control(); 
-  delay(4000);
+  delay(5000);
   move_left();
   delay(7000);
   move_right();
@@ -716,12 +716,8 @@ else {
   delay(1000);
 
   speedControl();
-
-  while(y > 1) {
-    forward_Control();
-    y = Enes100.getY();
-  }
-      
+  forward_Control();
+  delay(4000);
   stop_OSV();
   start_turning_CW(-1.57);
   stop_OSV();
@@ -729,10 +725,8 @@ else {
 
   Enes100.updateLocation();
 
-  while(y > 0.7) {
-    forward_Control();
-    y = Enes100.getY();
-  }
+  forward_Control();
+  delay(3000);
 
   stop_OSV();
   Enes100.print("The height is: ");
@@ -742,7 +736,7 @@ else {
   //Ram into the box
   speedControl();
   forward_Control();
-  delay(8000);
+  delay(6000);
       
   stop_OSV();
   delay(2000);
@@ -802,7 +796,7 @@ else {
 
 
   //obstacle 2
-  while (x < 3.2){
+  while (x < 3){
     forward_Control();
 
     //When touched, move back, and move left
@@ -850,4 +844,3 @@ delay(10000);
 }
 
 }
-
